@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SelenoMatch</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--tx:#14171f;--mu:#667085;--bd:#dfe3ea;--ac:#3b5bdb;--ok:#2f9e44;--wn:#e8890c;--er:#d6336c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1218;--card:#181c25;--tx:#e6e9f0;--mu:#8b93a5;--bd:#2a3040;--ac:#7c96ff}}
+:root[data-theme="dark"]{--bg:#0f1218;--card:#181c25;--tx:#e6e9f0;--mu:#8b93a5;--bd:#2a3040;--ac:#7c96ff}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--bd);background:var(--card);flex-wrap:wrap}
+header h1{font-size:17px;margin:0}header small{color:var(--mu)}
+.badge{font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid var(--bd);color:var(--mu)}
+.badge.mock{color:var(--wn);border-color:var(--wn)}
+nav{display:flex;gap:4px;padding:8px 18px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--bd)}
+nav button{background:none;border:0;color:var(--mu);padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;font:inherit}
+nav button.on{background:var(--ac);color:#fff}
+main{max-width:1200px;margin:0 auto;padding:16px}
+.tab{display:none}.tab.on{display:block}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.card h3{margin:0 0 10px;font-size:14px}
+label{display:block;font-size:12px;color:var(--mu);margin:8px 0 3px}
+select,input[type=number],input[type=text]{width:100%;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+input[type=range]{width:100%}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{background:var(--ac);color:#fff;border:0;padding:8px 14px;border-radius:8px;cursor:pointer;font:inherit}
+.btn.sec{background:none;color:var(--tx);border:1px solid var(--bd)}
+canvas{width:100%;height:auto;border-radius:8px;background:#000;display:block}
+.drop{border:2px dashed var(--bd);border-radius:10px;padding:10px;text-align:center;color:var(--mu);font-size:12px;margin-top:8px}
+.stages{display:flex;flex-direction:column;gap:6px}
+.st{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:8px;border:1px solid var(--bd);color:var(--mu)}
+.st i{width:10px;height:10px;border-radius:50%;background:var(--bd)}
+.st.run{color:var(--tx);border-color:var(--ac)}.st.run i{background:var(--ac)}
+.st.done{color:var(--tx)}.st.done i{background:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--bd)}
+.scroll{overflow-x:auto}
+.kpi{font-size:22px;font-weight:600}.kpi small{display:block;font-size:11px;color:var(--mu);font-weight:400}
+.bar{height:8px;border-radius:4px;background:var(--bd);overflow:hidden}.bar b{display:block;height:100%;background:var(--ac)}
+pre{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px;overflow-x:auto;font-size:12px;margin:6px 0}
+.slot{border:2px dashed var(--wn);border-radius:10px;padding:10px;margin-top:10px;font-size:12px;color:var(--wn)}
+ol li,ul li{margin:4px 0}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;color:#fff}
+</style></head><body>
+<header><h1>🌑 SelenoMatch</h1><small>Sun-angle &amp; scale-invariant multimodal matching · Chandrayaan-2 OHRC–TMC–IIRS</small>
+<span class="badge mock" id="mode">MOCK MODE</span><span style="flex:1"></span><span class="badge">SIH26166</span></header>
+<nav id="nav"></nav>
+<main>
+
+<section class="tab on" id="t-match">
+<div class="grid g3">
+ <div class="card"><h3>Image A</h3>
+  <label>Sensor</label><select id="sA"><option>OHRC · 0.25 m</option><option>TMC · ~5 m</option><option>IIRS · 80 m</option></select>
+  <label>Sun elevation <span id="eA">25</span>°</label><input type="range" id="elA" min="2" max="80" value="25">
+  <label>Sun azimuth <span id="azAv">90</span>°</label><input type="range" id="azA" min="0" max="359" value="90">
+  <canvas id="cA" width="240" height="240"></canvas><div class="drop">Drop PDS3/PDS4/GeoTIFF/QUB here <br><input type="file" id="fA"></div></div>
+ <div class="card"><h3>Image B</h3>
+  <label>Sensor</label><select id="sB"><option>TMC · ~5 m</option><option>OHRC · 0.25 m</option><option>IIRS · 80 m</option></select>
+  <label>Sun elevation <span id="eB">55</span>°</label><input type="range" id="elB" min="2" max="80" value="55">
+  <label>Sun azimuth <span id="azBv">250</span>°</label><input type="range" id="azB" min="0" max="359" value="250">
+  <canvas id="cB" width="240" height="240"></canvas><div class="drop">Drop second image here <br><input type="file" id="fB"></div></div>
+ <div class="card"><h3>Pipeline settings</h3>
+  <label>Matcher</label><select id="mm"><option>LoFTR (synthetic-pretrained)</option><option>RoMa</option><option>LightGlue</option><option>SIFT+RANSAC (baseline)</option></select>
+  <label>Pyramid levels: <span id="plv">4</span></label><input type="range" id="pl" min="1" max="6" value="4">
+  <label>Geometric model</label><select><option>Homography</option><option>Affine</option><option>Thin-plate-spline</option></select>
+  <label>Confidence threshold: <span id="thv">0.60</span></label><input type="range" id="th" min="0" max="100" value="60">
+  <label>IIRS bands (pseudo-pan proxy)</label><div class="row"><select style="width:auto"><option>1.0 µm</option><option>1.2 µm</option><option>1.5 µm</option></select><select style="width:auto"><option>1.6 µm</option><option>1.8 µm</option></select><select style="width:auto"><option>2.0 µm</option><option>2.2 µm</option></select></div>
+  <div class="row" style="margin-top:8px"><label style="margin:0"><input type="checkbox" id="oNorm" checked> Illumination normalization</label></div>
+  <div class="row"><label style="margin:0"><input type="checkbox" id="oDesh" checked> Lambertian de-shading</label></div>
+  <div class="row"><label style="margin:0"><input type="checkbox" checked> DEM slope pruning</label></div>
+  <div class="row"><label style="margin:0"><input type="checkbox"> WAC seleno-referencing bootstrap</label></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="run">▶ Run matching</button><button class="btn sec" id="rnd">🎲 New pair</button></div></div>
+</div>
+<div class="grid g2" style="margin-top:14px">
+ <div class="card"><h3>Pipeline progress</h3><div class="stages" id="stages"></div></div>
+ <div class="card"><h3>Summary</h3><div class="grid g3" style="grid-template-columns:repeat(2,1fr)">
+  <div class="kpi" id="k1">—<small>Matches kept</small></div><div class="kpi" id="k2">—<small>RMS error (px)</small></div>
+  <div class="kpi" id="k3">—<small>Mean confidence</small></div><div class="kpi" id="k4">—<small>Inference time</small></div></div>
+  <label>Estimated transform (3×3)</label><pre id="mat">—</pre>
+  <div class="slot" id="msg">Status: idle</div></div>
+</div>
+<div class="card" style="margin-top:14px"><h3>Correspondences <span class="badge" id="conf-badge"></span></h3><canvas id="cM" width="960" height="330"></canvas>
+ <div class="row" style="margin-top:8px"><label style="margin:0"><input type="checkbox" id="showRej"> show rejected</label>
+  <label style="margin:0"><input type="checkbox" id="showLbl" checked> confidence colours</label></div></div>
+<div class="grid g2" style="margin-top:14px">
+ <div class="card"><h3>Registered overlay (swipe)</h3><div style="position:relative"><canvas id="cO" width="480" height="300"></canvas></div>
+  <input type="range" id="sw" min="0" max="100" value="50"><div class="row"><button class="btn sec" onclick="exp('geotiff')">Export GeoTIFF</button><button class="btn sec" onclick="exp('json')">Export JSON</button><button class="btn sec" onclick="exp('png')">Export PNG</button></div></div>
+ <div class="card"><h3>Match explanations</h3><div class="scroll"><table><thead><tr><th>#</th><th>Conf.</th><th>Residual</th><th>Reason</th></tr></thead><tbody id="tb"></tbody></table></div></div>
+</div></section>
+
+<section class="tab" id="t-synth"><div class="grid g2">
+ <div class="card"><h3>Synthetic DEM pair generator</h3>
+  <label>DEM source</label><select><option>LOLA (LRO)</option><option>OHRC-derived (ASP)</option><option>Upload GeoTIFF DEM</option></select>
+  <label>Shader</label><select><option>Lambertian</option><option>Hapke</option><option>Blender (Cycles)</option></select>
+  <div class="row"><div style="flex:1"><label>Sun elevation range</label><input type="text" value="5 – 75"></div><div style="flex:1"><label>Azimuth range</label><input type="text" value="0 – 359"></div></div>
+  <div class="row"><div style="flex:1"><label>GSD ratios</label><input type="text" value="1, 4, 16, 64, 320"></div><div style="flex:1"><label>Pairs</label><input type="number" id="nPairs" value="1000"></div></div>
+  <label>Noise / radiometric jitter</label><input type="range">
+  <div class="row" style="margin-top:10px"><button class="btn" id="gen">Generate preview</button><button class="btn sec" id="ds">Start dataset job</button></div>
+  <div class="slot" id="sm">POST /api/synth/generate · idle</div></div>
+ <div class="card"><h3>Preview: same DEM, 3 Sun angles</h3><div class="grid" style="grid-template-columns:repeat(3,1fr)"><canvas id="s1" width="160" height="160"></canvas><canvas id="s2" width="160" height="160"></canvas><canvas id="s3" width="160" height="160"></canvas></div>
+  <p style="color:var(--mu);font-size:12px">Ground-truth correspondences are exact because the DEM is fixed — no manual labelling.</p></div>
+ <div class="card"><h3>Training / fine-tuning</h3><label>Stage</label><select><option>Synthetic pre-train</option><option>Domain adaptation (cycle + photometric)</option></select>
+  <label>Epochs</label><input type="number" id="nEp" value="30"><div class="row" style="margin-top:10px"><button class="btn" id="tr">Start training</button></div>
+  <div class="bar" style="margin-top:10px"><b id="trb" style="width:0"></b></div><small id="trt" style="color:var(--mu)">idle</small>
+  <div class="slot" id="tm">POST /api/train + WS /ws/train</div></div>
+ <div class="card"><h3>Model registry</h3><table><tr><th>Model</th><th>Size</th><th>Status</th></tr><tr><td>loftr-lunar-v1</td><td>44 MB</td><td>active</td></tr><tr><td>loftr-lunar-v1.onnx</td><td>41 MB</td><td>edge-ready</td></tr><tr><td>sift-baseline</td><td>—</td><td>classical</td></tr></table></div>
+</div></section>
+
+<section class="tab" id="t-bench"><div class="grid g2">
+ <div class="card"><h3>Success rate vs Sun-angle difference</h3><canvas id="ch" width="480" height="260"></canvas>
+  <div class="row"><span class="pill" style="background:#3b5bdb">SelenoMatch</span><span class="pill" style="background:#e8890c">SIFT</span><span class="pill" style="background:#d6336c">ORB</span></div></div>
+ <div class="card"><h3>Sensor-pair results</h3><table id="bt"><tr><th>Pair</th><th>Method</th><th>RMS px</th><th>Success</th></tr>
+ <tr><td>OHRC–TMC</td><td>SelenoMatch</td><td>0.6</td><td>94%</td></tr><tr><td>OHRC–TMC</td><td>SIFT</td><td>2.9</td><td>61%</td></tr>
+ <tr><td>TMC–IIRS</td><td>SelenoMatch</td><td>0.8</td><td>89%</td></tr><tr><td>TMC–IIRS</td><td>SIFT</td><td>3.4</td><td>48%</td></tr>
+ <tr><td>OHRC–IIRS</td><td>SelenoMatch</td><td>1.1</td><td>81%</td></tr></table>
+ <p style="color:var(--mu);font-size:12px">Placeholder numbers — replace via GET /api/benchmark.</p>
+ <div class="slot">⚙ BACKEND SLOT · GET /api/benchmark</div></div></div></section>
+
+<section class="tab" id="t-data"><div class="grid g2">
+ <div class="card"><h3>Data sources</h3><table><tr><th>Source</th><th>Use</th><th></th></tr>
+ <tr><td>ISRO PRADAN / ISSDC</td><td>OHRC, TMC, IIRS</td><td><button class="btn sec">Connect</button></td></tr>
+ <tr><td>NASA PDS Imaging</td><td>LRO WAC / NAC</td><td><button class="btn sec">Connect</button></td></tr>
+ <tr><td>LOLA DEM</td><td>Synthetic rendering</td><td><button class="btn sec">Connect</button></td></tr></table></div>
+ <div class="card"><h3>Job history</h3><table id="jobs"><tr><th>ID</th><th>Pair</th><th>Status</th></tr><tr><td>job-001</td><td>OHRC–TMC</td><td>done</td></tr><tr><td>job-002</td><td>TMC–IIRS</td><td>done</td></tr></table>
+ <div class="slot">⚙ BACKEND SLOT · GET /api/jobs</div></div></div></section>
+
+<section class="tab" id="t-be"><div class="card">
+<h3>Backend integration guide</h3>
+<p>The page auto-detects the backend (badge top-right: LIVE or MOCK). Served from the backend it uses the same origin; opened as a file it uses http://localhost:8000 (override with <code>?api=http://host:port</code>).</p>
+<h3>1 · Setup</h3><ol>
+<li>Create <code>backend/</code> with <b>FastAPI</b> + uvicorn; enable CORS for the frontend origin.</li>
+<li><code>pip install torch kornia opencv-python rasterio numpy scipy onnxruntime fastapi uvicorn python-multipart</code> (+ ISIS3 / Ames Stereo Pipeline via conda if needed).</li>
+<li>Structure: <code>main.py</code>, <code>io_readers.py</code>, <code>normalize.py</code>, <code>pyramid.py</code>, <code>matcher.py</code>, <code>verify.py</code>, <code>explain.py</code>, <code>synth/render.py</code>, <code>train.py</code>.</li></ol>
+<h3>2 · Endpoints to implement</h3>
+<pre>POST /api/upload        multipart file + sensor → {image_id, preview_png, meta{sun_el, sun_az, gsd}}
+POST /api/match         {image_a, image_b, options} → {job_id}
+GET  /api/jobs/{id}     → {status, stage, result}
+result = {
+  matches:[{p:[x,y], q:[x,y], conf:0.91, residual:0.4, reason:"crater rim…", kept:true}],
+  transform:[[..],[..],[..]], rms:0.6, time_ms:1800,
+  registered_png:"…", geotiff_url:"…"
+}
+POST /api/synth/generate {dem, shader, sun_el:[5,75], sun_az:[0,359], gsd_ratios, n}
+POST /api/train         {stage, epochs}   +  WS /ws/train (progress)
+GET  /api/benchmark     → table + curves
+POST /api/export        {job_id, format: geotiff|json|png}</pre>
+<h3>3 · Pipeline logic behind /api/match (in order)</h3><ol>
+<li><b>Read</b> files: rasterio/GDAL for GeoTIFF and PDS; <code>planetaryimage</code> or spectral for IIRS cubes. Pick 2–3 reflectance bands and average into a pseudo-pan image.</li>
+<li><b>Normalize</b>: local contrast (CLAHE), gradient maps; optional Lambertian de-shading from metadata Sun angles.</li>
+<li><b>Pyramid</b>: downsample both to the coarse GSD, match, estimate transform, then refine at native OHRC resolution inside that footprint.</li>
+<li><b>Match</b>: <code>kornia.feature.LoFTR</code> (start with pretrained), later swap in your fine-tuned weights.</li>
+<li><b>Verify</b>: <code>cv2.findHomography(..., cv2.RANSAC)</code>; compute residual per match; drop above threshold.</li>
+<li><b>Explain</b>: template string per cluster (feature type, residual, confidence).</li>
+<li><b>Return</b> JSON in the shape above; run as a background task and poll the job.</li></ol>
+<h3>4 · Synthetic data (do this early)</h3><ol>
+<li>Load LOLA DEM tiles; compute slope/aspect with NumPy.</li>
+<li>Shade: <code>I = max(0, n·s)</code> with Sun vector s from (elevation, azimuth); add noise.</li>
+<li>Warp for scale changes; store known correspondences; train LoFTR with the matching loss.</li></ol>
+<h3>5 · Deploy</h3><ol><li>Export with <code>torch.onnx.export</code>; run with onnxruntime on CPU for the on-site demo.</li><li>Serve frontend statically from FastAPI (<code>StaticFiles</code>).</li></ol>
+<pre>uvicorn main:app --port 8000   →   open http://localhost:8000</pre></div></section>
+</main>
+<script>
+let API_BASE="",LIVE=false;
+const $=id=>document.getElementById(id);
+
+// tabs
+const tabs=[["match","Matching"],["synth","Synthetic Data & Training"],["bench","Benchmarks"],["data","Data & Jobs"],["be","Backend Guide"]];
+tabs.forEach(([k,n],i)=>{const b=document.createElement("button");b.textContent=n;if(!i)b.className="on";b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.className="");b.className="on";document.querySelectorAll(".tab").forEach(t=>t.className="tab");$("t-"+k).className="tab on"};$("nav").appendChild(b)});
+// terrain
+let seed=7;const rnd=s=>{let x=Math.sin(s)*1e4;return x-Math.floor(x)};
+function height(sd,N=200){const h=new Float32Array(N*N);for(let c=0;c<40;c++){const cx=rnd(sd+c)*N,cy=rnd(sd+c*3)*N,r=6+rnd(sd+c*7)*24,d=r*.25;for(let y=0;y<N;y++)for(let x=0;x<N;x++){const dd=Math.hypot(x-cx,y-cy)/r;if(dd<1.4)h[y*N+x]+=dd<1?-d*(1-dd*dd):d*.6*Math.exp(-(((dd-1)*4)**2))}}return h}
+function draw(cv,sd,el,az,scale=1){const N=200,h=height(sd),ctx=cv.getContext("2d"),im=ctx.createImageData(N,N);const e=el*Math.PI/180,a=az*Math.PI/180,L=[Math.cos(e)*Math.sin(a),Math.cos(e)*-Math.cos(a),Math.sin(e)];
+for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++){const dx=(h[y*N+x+1]-h[y*N+x-1])/2,dy=(h[(y+1)*N+x]-h[(y-1)*N+x])/2,n=Math.hypot(dx,dy,1),v=Math.max(0,(-dx*L[0]-dy*L[1]+L[2])/n),g=Math.min(255,40+v*210),i=(y*N+x)*4;im.data[i]=g;im.data[i+1]=g;im.data[i+2]=g*.96;im.data[i+3]=255}
+const t=document.createElement("canvas");t.width=t.height=N;t.getContext("2d").putImageData(im,0,0);ctx.imageSmoothingEnabled=scale<1;ctx.clearRect(0,0,cv.width,cv.height);ctx.drawImage(t,0,0,cv.width,cv.height)}
+function refresh(){draw($("cA"),seed,+$("elA").value,+$("azA").value);draw($("cB"),seed,+$("elB").value,+$("azB").value);drawOv()}
+["elA","azA","elB","azB"].forEach(id=>$(id).oninput=()=>{$("eA").textContent=$("elA").value;$("azAv").textContent=$("azA").value;$("eB").textContent=$("elB").value;$("azBv").textContent=$("azB").value;refresh()});
+$("pl").oninput=()=>$("plv").textContent=$("pl").value;$("th").oninput=()=>{$("thv").textContent=($("th").value/100).toFixed(2);if(M.length)showMatches()};
+$("rnd").onclick=()=>{seed=Math.floor(Math.random()*999);refresh()};
+$("sw").oninput=drawOv;
+function drawOv(){const c=$("cO"),x=c.getContext("2d"),w=c.width,h=c.height,s=$("sw").value/100*w;x.clearRect(0,0,w,h);x.drawImage($("cA"),0,0,w,h);x.save();x.beginPath();x.rect(s,0,w-s,h);x.clip();x.drawImage($("cB"),0,0,w,h);x.restore();x.strokeStyle="#fff";x.beginPath();x.moveTo(s,0);x.lineTo(s,h);x.stroke()}
+// stages
+const ST=["Ingestion & pre-georeferencing","Illumination normalization","Multi-scale pyramid","Learned matcher","RANSAC / geometric verification","Confidence & explanation","Output & registration"];
+$("stages").innerHTML=ST.map(s=>`<div class="st"><i></i>${s}</div>`).join("");
+let M=[];const REASONS=["crater rim structure","boulder cluster","ridge line","crater floor edge","terrain slope break"];
+async function runMatch(){
+ $("run").disabled=true;const el=[...document.querySelectorAll(".st")];el.forEach(e=>e.className="st");
+ // TODO backend: const job=await api("/api/match",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...})}); poll /api/jobs/{id}
+ for(let i=0;i<el.length;i++){el[i].className="st run";await new Promise(r=>setTimeout(r,450));el[i].className="st done"}
+ M=[];for(let i=0;i<40;i++){const c=Math.min(.99,Math.max(.2,.85-rnd(i*5+seed)*.6+rnd(i)*.2));M.push({p:[20+rnd(i*2+seed)*200,20+rnd(i*3+seed)*200],c,r:+(.2+(1-c)*2.5).toFixed(2),why:REASONS[i%5]})}
+ showMatches();$("run").disabled=false}
+function showMatches(){const t=$("th").value/100,cv=$("cM"),x=cv.getContext("2d");x.clearRect(0,0,960,330);x.drawImage($("cA"),0,0,470,330);x.drawImage($("cB"),490,0,470,330);
+ const kept=M.filter(m=>m.c>=t);M.forEach(m=>{const ok=m.c>=t;if(!ok&&!$("showRej").checked)return;const a=[m.p[0]*470/240,m.p[1]*330/240],b=[490+a[0]+ (rnd(m.p[0])-.5)*4,a[1]+(rnd(m.p[1])-.5)*4];
+ x.strokeStyle=!ok?"rgba(150,150,150,.5)":$("showLbl").checked?(m.c>.8?"#2f9e44":m.c>.65?"#e8890c":"#d6336c"):"#3b5bdb";x.lineWidth=1.2;x.beginPath();x.moveTo(...a);x.lineTo(...b);x.stroke();x.fillStyle=x.strokeStyle;[a,b].forEach(q=>{x.beginPath();x.arc(q[0],q[1],3,0,7);x.fill()})});
+ const mc=kept.reduce((s,m)=>s+m.c,0)/(kept.length||1),rms=kept.reduce((s,m)=>s+m.r,0)/(kept.length||1);
+ $("k1").firstChild.textContent=kept.length+"/"+M.length;$("k2").firstChild.textContent=rms.toFixed(2);$("k3").firstChild.textContent=mc.toFixed(2);$("k4").firstChild.textContent="1.8 s";
+ $("conf-badge").textContent=kept.length+" kept";$("mat").textContent="[ 1.002  0.011  -3.41 ]\n[-0.009  0.998   2.07 ]\n[ 0.000  0.000   1.00 ]";
+ $("tb").innerHTML=kept.slice(0,10).map((m,i)=>`<tr><td>${i+1}</td><td>${m.c.toFixed(2)}</td><td>${m.r} px</td><td>Matched via ${m.why}, illumination-normalized</td></tr>`).join("")}
+$("run").onclick=runMatch;$("showRej").onchange=$("showLbl").onchange=()=>M.length&&showMatches();
+// synth
+function synth(){const s=Math.floor(Math.random()*999);[["s1",10],["s2",40],["s3",70]].forEach(([id,e])=>draw($(id),s,e,120))}
+$("gen").onclick=synth;
+let tv;$("tr").onclick=()=>{let p=0;clearInterval(tv);tv=setInterval(()=>{p+=2;$("trb").style.width=p+"%";$("trt").textContent=`epoch ${Math.floor(p*.3)}/30 · loss ${(1.2-p*.009).toFixed(3)}`;if(p>=100)clearInterval(tv)},120)};
+// chart
+function chart(){const c=$("ch"),x=c.getContext("2d"),cs=getComputedStyle(document.body);x.clearRect(0,0,480,260);x.strokeStyle=cs.getPropertyValue("--bd");x.fillStyle=cs.getPropertyValue("--mu");x.font="11px sans-serif";
+ for(let i=0;i<=4;i++){x.beginPath();x.moveTo(40,20+i*50);x.lineTo(470,20+i*50);x.stroke();x.fillText(100-i*25+"%",5,24+i*50)}
+ [["#3b5bdb",[96,94,91,88,84,80]],["#e8890c",[90,72,54,38,25,15]],["#d6336c",[82,60,40,25,14,8]]].forEach(([col,d])=>{x.strokeStyle=col;x.lineWidth=2;x.beginPath();d.forEach((v,i)=>{const px=50+i*82,py=220-v*2;i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke()});
+ ["0°","10°","20°","30°","40°","50°"].forEach((t,i)=>x.fillText(t,45+i*82,245))}
+chart();refresh();synth();
+</script>
+<script>
+// ===== LIVE BACKEND WIRING (overrides mock functions above) =====
+const qs=new URLSearchParams(location.search);
+if(location.protocol==="file:"||qs.get("api"))API_BASE=qs.get("api")||"http://localhost:8000";
+async function api(path,opts){const r=await fetch(API_BASE+path,opts);if(!r.ok)throw new Error((await r.text()).slice(0,200));return r.json()}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms)),msg=t=>$("msg").textContent="Status: "+t;
+const IDS={A:null,B:null},PREV={A:null,B:null};let REG=null,R=null,LASTJOB=null,SZ={a:[240,240],b:[240,240]};
+async function detect(){try{await api("/api/jobs");LIVE=true}catch(e){LIVE=false}
+ $("mode").textContent=LIVE?"LIVE · "+(API_BASE||location.host):"MOCK MODE (backend not found)";$("mode").className="badge"+(LIVE?"":" mock");if(LIVE){loadJobs();loadBench()}}
+function paint(s){const cv=$("c"+s);if(PREV[s]){const x=cv.getContext("2d");x.clearRect(0,0,cv.width,cv.height);x.drawImage(PREV[s],0,0,cv.width,cv.height)}else draw(cv,seed,+$("el"+s).value,+$("az"+s).value)}
+function refresh(){paint("A");paint("B");drawOv()}
+function drawOv(){const c=$("cO"),x=c.getContext("2d"),w=c.width,h=c.height,s=$("sw").value/100*w;x.clearRect(0,0,w,h);x.drawImage($("cA"),0,0,w,h);x.save();x.beginPath();x.rect(s,0,w-s,h);x.clip();x.drawImage(REG||$("cB"),0,0,w,h);x.restore();x.strokeStyle="#fff";x.beginPath();x.moveTo(s,0);x.lineTo(s,h);x.stroke()}
+$("sw").oninput=drawOv;
+async function up(side,file){if(!file)return;if(!LIVE){msg("backend offline — upload ignored");return}
+ try{msg("uploading "+file.name+"…");const x=new FormData();x.append("file",file);x.append("sensor",$("s"+side).value.split(" ")[0]);x.append("sun_el",$("el"+side).value);x.append("sun_az",$("az"+side).value);
+ const r=await api("/api/upload",{method:"POST",body:x});IDS[side]=r.image_id;const im=new Image();im.onload=()=>{PREV[side]=im;refresh()};im.src=API_BASE+r.preview_png;msg("uploaded "+side+" → "+r.image_id)}catch(e){msg("upload failed: "+e.message)}}
+$("fA").onchange=e=>up("A",e.target.files[0]);$("fB").onchange=e=>up("B",e.target.files[0]);
+function mark(stage){const el=[...document.querySelectorAll(".st")],i=ST.findIndex(x=>stage&&stage.startsWith(x));el.forEach((e,k)=>e.className="st"+(k<i?" done":k==i?" run":""));if(i<0)el[0].className="st done"}
+async function runMatch(){$("run").disabled=true;document.querySelectorAll(".st").forEach(e=>e.className="st");REG=null;
+ try{
+ if(LIVE){if(!IDS.A||!IDS.B)throw new Error("upload both images first");
+  const o={levels:+$("pl").value,conf_th:$("th").value/100,normalize:$("oNorm").checked,deshade:$("oDesh").checked};
+  const {job_id}=await api("/api/match",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image_a:IDS.A,image_b:IDS.B,options:o})});
+  let j;do{await sleep(600);j=await api("/api/jobs/"+job_id);mark(j.stage);msg(j.status+" · "+(j.stage||"queued"))}while(j.status==="queued"||j.status==="running");
+  if(j.status!=="done")throw new Error(j.error||"job failed");
+  R=j.result;LASTJOB=job_id;SZ={a:R.size_a,b:R.size_b};
+  M=R.matches.map(m=>({p:m.p,q:m.q,c:m.conf,r:m.residual,why:m.reason,kept:m.kept}));
+  const im=new Image();im.onload=()=>{REG=im;drawOv()};im.src=API_BASE+R.registered_png;loadJobs();
+ }else{const el=[...document.querySelectorAll(".st")];for(let i=0;i<el.length;i++){el[i].className="st run";await sleep(400);el[i].className="st done"}
+  SZ={a:[240,240],b:[240,240]};R={transform:[[1.002,.011,-3.41],[-.009,.998,2.07],[0,0,1]],time_ms:1800};
+  M=[];for(let i=0;i<40;i++){const c=Math.min(.99,Math.max(.2,.85-rnd(i*5+seed)*.6+rnd(i)*.2)),p=[20+rnd(i*2+seed)*200,20+rnd(i*3+seed)*200];M.push({p,q:[p[0]+(rnd(i)-.5)*4,p[1]+(rnd(i+9)-.5)*4],c,r:+(.2+(1-c)*2.5).toFixed(2),why:`matched via ${REASONS[i%5]}, illumination-normalized (mock)`,kept:true})}}
+  el_done();showMatches();msg("done")
+ }catch(e){msg("ERROR: "+e.message)}$("run").disabled=false}
+function el_done(){document.querySelectorAll(".st").forEach(e=>e.className="st done")}
+function showMatches(){const t=$("th").value/100,x=$("cM").getContext("2d");x.clearRect(0,0,960,330);x.drawImage($("cA"),0,0,470,330);x.drawImage($("cB"),490,0,470,330);
+ const ok=m=>m.kept&&m.c>=t,kept=M.filter(ok);
+ M.forEach(m=>{if(!ok(m)&&!$("showRej").checked)return;const a=[m.p[0]/SZ.a[0]*470,m.p[1]/SZ.a[1]*330],b=[490+m.q[0]/SZ.b[0]*470,m.q[1]/SZ.b[1]*330];
+  x.strokeStyle=!ok(m)?"rgba(150,150,150,.5)":$("showLbl").checked?(m.c>.8?"#2f9e44":m.c>.65?"#e8890c":"#d6336c"):"#3b5bdb";x.fillStyle=x.strokeStyle;x.lineWidth=1.2;x.beginPath();x.moveTo(...a);x.lineTo(...b);x.stroke();[a,b].forEach(q=>{x.beginPath();x.arc(q[0],q[1],3,0,7);x.fill()})});
+ const mc=kept.reduce((s,m)=>s+m.c,0)/(kept.length||1),rms=R.rms??Math.sqrt(kept.reduce((s,m)=>s+m.r*m.r,0)/(kept.length||1));
+ $("k1").firstChild.textContent=kept.length+"/"+M.length;$("k2").firstChild.textContent=(+rms).toFixed(2);$("k3").firstChild.textContent=mc.toFixed(2);$("k4").firstChild.textContent=(R.time_ms/1000).toFixed(1)+" s";
+ $("conf-badge").textContent=kept.length+" kept";$("mat").textContent=R.transform.map(r=>"[ "+r.map(v=>v.toFixed(3).padStart(9)).join(" ")+" ]").join("\n");
+ $("tb").innerHTML=kept.slice(0,10).map((m,i)=>`<tr><td>${i+1}</td><td>${m.c.toFixed(2)}</td><td>${(+m.r).toFixed(2)} px</td><td>${m.why}</td></tr>`).join("")}
+$("run").onclick=runMatch;
+function exp(f){if(!LIVE||!LASTJOB)return msg("run a live match first");window.open(API_BASE+"/api/export?job_id="+LASTJOB+"&format="+f)}
+async function loadJobs(){try{const j=await api("/api/jobs");$("jobs").innerHTML="<tr><th>ID</th><th>Pair</th><th>Status</th></tr>"+j.map(x=>`<tr><td>${x.id}</td><td>${x.pair}</td><td>${x.status}</td></tr>`).join("")}catch(e){}}
+async function loadBench(){try{const b=await api("/api/benchmark");if(b.pairs&&b.pairs.length)$("bt").innerHTML="<tr><th>Pair</th><th>Method</th><th>RMS px</th><th>Success</th></tr>"+b.pairs.map(x=>`<tr><td>${x.pair}</td><td>${x.method}</td><td>${x.rms}</td><td>${x.success}</td></tr>`).join("")}catch(e){}}
+$("ds").onclick=async()=>{if(!LIVE)return $("sm").textContent="backend offline";try{await api("/api/synth/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({n:+$("nPairs").value,sun_el:[5,75],gsd_ratios:[1,4,16,64]})});
+ let s;do{await sleep(1000);s=await api("/api/synth/status");$("sm").textContent=`synth: ${s.status} ${s.done}/${s.n}`}while(s.status==="running")}catch(e){$("sm").textContent="ERROR: "+e.message}};
+$("tr").onclick=async()=>{if(!LIVE){let p=0;clearInterval(tv);tv=setInterval(()=>{p+=2;$("trb").style.width=p+"%";$("trt").textContent=`epoch ${Math.floor(p*.3)}/30 (mock)`;if(p>=100)clearInterval(tv)},120);return}
+ try{await api("/api/train",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({stage:"synthetic",epochs:+$("nEp").value})});
+ const ws=new WebSocket((API_BASE||location.origin).replace(/^http/,"ws")+"/ws/train");ws.onmessage=e=>{const d=JSON.parse(e.data);$("trb").style.width=(d.epochs?d.epoch/d.epochs*100:0)+"%";$("trt").textContent=`${d.status} · epoch ${d.epoch}/${d.epochs} · loss ${d.loss??"—"}`;$("tm").textContent=d.error?"ERROR: "+d.error:"training…"}}catch(e){$("tm").textContent="ERROR: "+e.message}};
+const navb=document.querySelectorAll("nav button");navb[3].addEventListener("click",loadJobs);navb[2].addEventListener("click",loadBench);
+detect();refresh();
+</script></body></html>

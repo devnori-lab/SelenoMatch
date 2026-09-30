@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+backend/uploads/
+backend/outputs/
+backend/data/
+backend/models/*.pt
+backend/models/*.onnx
+backend/test_*.png
+.torch/
